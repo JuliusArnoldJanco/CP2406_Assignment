@@ -11,4 +11,39 @@ public class Vehicle {
         speed = newspeed;
 
     }
+
+    // getters/setters
+
+    public int getX(){
+        return x;
+    }
+
+    public int getY(){
+        return y;
+    }
+
+    public int getWidth(){
+        return width;
+    }
+
+    public int getHeight(){
+        return height;
+    }
+
+    public void setSpeed(int newspeed){speed = newspeed;}
+
+    public void setX(int newx){
+        x = newx;
+    }
+
+    public void setY(int newy){
+        y = newy;
+    }
+
+    public int getSpeed(){
+        return speed;
+    }
+
+
+
 }

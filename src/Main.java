@@ -1,12 +1,13 @@
 public class Main {
 
-    Vehicle vehicle = new Vehicle(0,0,9);
+    public static void main(String[] args) throws InterruptedException {
 
-
-
-
-    private void print(){
-        vehicle.speed = 9;
+        //Basic simulation is run through road Class.
+        //A new road class is being generated here.
+        Road road = new Road();
 
     }
+
+
 }
+
