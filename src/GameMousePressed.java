@@ -28,14 +28,15 @@ public class GameMousePressed extends MouseAdapter {
         String path = String.valueOf(c.getIcon());
         System.out.println(path);
         System.out.print("Mouse press X is:");
-        System.out.println(x);
+        System.out.println(iconX);
+        GC.menuClick(iconX,iconY);
 
 
         System.out.println("Mouse Press");
         System.out.print("Mouse press Y is:");
-        System.out.println(y);
+        System.out.println(iconY);
 
-        GC.gridDataStore(12,0);
+
 
 
         TransferHandler handler = c.getTransferHandler();

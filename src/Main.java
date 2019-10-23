@@ -28,9 +28,9 @@ public class Main extends JFrame {
             buttonsPanel2.setLayout(new GridLayout(2, 2));
             ImageSetup IS = new ImageSetup();
             ImageIcon micon1 = IS.getIcon5();
-            ImageIcon micon2 = IS.getIcon5();
-            ImageIcon micon3 = IS.getIcon5();
-            ImageIcon micon4 = IS.getIcon5();
+            ImageIcon micon2 = IS.getIcon6();
+            ImageIcon micon3 = IS.getIcon7();
+            ImageIcon micon4 = IS.getIcon8();
             ImageIcon icon0 = IS.getIcon0();
             ImageIcon icon1 = IS.getIcon1();
             ImageIcon icon2 = IS.getIcon2();
@@ -54,7 +54,7 @@ public class Main extends JFrame {
 
             //Listeners are created here
 
-            rdCnr.addMouseListener(listenerDrop);
+            rdCnr.addMouseListener(listener);
             rdStr8.addMouseListener(listener);
             rdXsec.addMouseListener(listener);
             rdTsec.addMouseListener(listener);

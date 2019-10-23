@@ -10,7 +10,7 @@ public class GameMouseReleased extends MouseAdapter {
     int x;
     int y;
 
-
+    GC GC = new GC();
 
     public void mouseReleased(MouseEvent e) {
         JLabel c = (JLabel) e.getSource();
@@ -20,16 +20,10 @@ public class GameMouseReleased extends MouseAdapter {
         int y = e.getY();
 
         String path = String.valueOf(c.getIcon());
-      //  System.out.println(path);
-      //  System.out.print("Mouse release X is:");
-      //  System.out.println(x);
 
+        GC.gridDataStore(GC.getMenuIcon(),0);
 
-      //  System.out.println("Mouse Release");
-       // System.out.print("Mouse release Y is:");
-        //System.out.println(y);
-
-
+        System.out.println("getGrid Info function: "+GC.getGridInfo(0));
 
         TransferHandler handler = c.getTransferHandler();
         handler.exportAsDrag(c, e, TransferHandler.COPY);
