@@ -12,7 +12,7 @@ public class ImageSetup {
     ImageIcon micon2 = new ImageIcon("src/resources/mStr8.png");
     ImageIcon micon3 = new ImageIcon("src/resources/mXSection.png");
     ImageIcon micon4 = new ImageIcon("src/resources/mTSection.png");
-
+    
 
     public ImageIcon getIcon0() {return icon0;}
     public ImageIcon getIcon1() {return icon1;}

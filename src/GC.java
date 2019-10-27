@@ -1,6 +1,18 @@
 public class GC {
-   int[] gridInformation;
-   int menuIcon;
+
+
+
+
+
+
+    int[] gridInformation;
+   int menuIcon = 69;
+
+
+
+
+
+
 
    public void gridDataStore(int intForArray, int arrayLocation){
        gridInformation = new int[9];
@@ -132,31 +144,13 @@ public class GC {
 
        public int getGridInfo(int cellNumber){ return gridInformation[cellNumber]; }
 
-       public void menuClick(int IconLocationX, int IconLocationY)
-       { if (IconLocationX == 0 && IconLocationY == 0){
-         System.out.println("X Val "+IconLocationX+" Y Val "+IconLocationY);
-         menuIcon = 1;
-         System.out.println("menuIcon" + menuIcon);
-       }
-       else if(IconLocationX == 36 && IconLocationY == 0) {
-           System.out.println("X Val "+IconLocationX+" Y Val "+IconLocationY);
-           menuIcon = 2;
-           System.out.println("menuIcon" + menuIcon);
-       }
-       else if(IconLocationX == 0 && IconLocationY == 56) {
-           System.out.println("X Val "+IconLocationX+" Y Val "+IconLocationY);
-           menuIcon = 3;
-           System.out.println("menuIcon" + menuIcon);
-       }
-       else if(IconLocationX == 36 && IconLocationY == 56) {
-           System.out.println("X Val "+IconLocationX+" Y Val "+IconLocationY);
 
-           menuIcon = 4;
-           System.out.println("menuIcon" + menuIcon);
-       }
 
-       }
-       public int getMenuIcon(){return menuIcon;}
+       public int getMenuIcon(){
+    System.out.println("menuIcon is: " + menuIcon);return menuIcon;}
 
-   }
+    public void setMenuIcon(int MenuIconNumber) {
+        menuIcon = MenuIconNumber;
+    }
+}
 
