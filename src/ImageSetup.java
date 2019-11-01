@@ -1,6 +1,7 @@
 import javax.swing.*;
+import java.util.ArrayList;
 
-public class ImageSetup {
+public class ImageSetup extends ArrayList {
 
     ImageIcon icon0 = new ImageIcon("src/resources/GridBlank.png");
     ImageIcon icon1 = new ImageIcon("src/resources/Corner.png");
@@ -12,6 +13,8 @@ public class ImageSetup {
     ImageIcon micon2 = new ImageIcon("src/resources/mStr8.png");
     ImageIcon micon3 = new ImageIcon("src/resources/mXSection.png");
     ImageIcon micon4 = new ImageIcon("src/resources/mTSection.png");
+
+    ImageIcon[] imageArray = {icon0,icon0,icon0,icon0,icon0,icon0,icon0,icon0,icon0};
     
 
     public ImageIcon getIcon0() {return icon0;}
@@ -23,5 +26,12 @@ public class ImageSetup {
     public ImageIcon getIcon6() {return micon2;}
     public ImageIcon getIcon7() {return micon3;}
     public ImageIcon getIcon8() {return micon4;}
+
+    public void InputImageIntoArray(ImageIcon myImage, int myIndex){
+        imageArray[myIndex] = myImage;
+    }
+    public ImageIcon getImageFromArray(int myIndex){
+        return imageArray[myIndex];
+    }
     }
 

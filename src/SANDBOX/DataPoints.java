@@ -15,18 +15,14 @@ public class DataPoints extends ArrayList {
 
 
 
-    double str8Rotation ;
+    double str8Rotation=0, quarterRotation = 90 ;
 
 
 
 
 
 
-    //Constructor
-    public DataPoints(){
 
-
-    }
     public void InputCondition(int Condition, int Index){
         gridIcons[Index] = Condition;
     }
@@ -54,6 +50,9 @@ public class DataPoints extends ArrayList {
     public int getCond(int Index) {
         return gridIcons[Index];
     }
+    public int[] getArray() {
+        return gridIcons;
+    }
 
     public void setPressX(int x) {
         Px = x;
@@ -70,8 +69,9 @@ public class DataPoints extends ArrayList {
         Ry = y;
     }
 
-    public void setStr8Rotation(double rotation){
-        str8Rotation = rotation ;
+    public void setStr8Rotation(){
+        str8Rotation += quarterRotation
+        ;
     }
     public double getStr8Rotation(){
 
