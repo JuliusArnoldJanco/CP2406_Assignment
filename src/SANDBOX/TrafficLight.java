@@ -28,7 +28,8 @@ public TrafficLight() {
         Graphics2D g2d = (Graphics2D) g.create();
 
 
-        g.setColor(Color.black);
+        g.setColor(Color.DARK_GRAY);
+
         g.fillRect(0,0,TL_WIDTH,TL_HEIGHT);
         if (TRAFFICLIGHT_CONDITION == 1) {
             g.setColor(Color.RED);     //light red

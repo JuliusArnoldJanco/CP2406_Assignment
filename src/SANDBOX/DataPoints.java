@@ -77,4 +77,5 @@ public class DataPoints extends ArrayList {
 
         return str8Rotation;
     }
+    public int[] getGridIcons(){return gridIcons;}
 }

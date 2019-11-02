@@ -183,6 +183,7 @@ class gui implements ActionListener {
                 SaveGame();
                f.dispose();
                 try {
+                    f.dispose();
                     new RunSim();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
