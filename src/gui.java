@@ -160,9 +160,7 @@ class gui implements ActionListener {
 
         public void mouseClicked(MouseEvent event) {
 
-            Random randomGenerator = new Random();
-            int TLCondition = randomGenerator.nextInt(3) + 1;
-            TL.setTrafficLightCondition(TLCondition);
+
             // whenever the mouse is states the position where it clicked with x and y in the statusbar
             // statusbar.setText(String.format("Clicked at %d, %d", event.getXOnScreen(), event.getYOnScreen()));
             if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>70 && DP.getPressY()<270){
