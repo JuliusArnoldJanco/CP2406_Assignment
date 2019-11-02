@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Random;
 
 class gui implements ActionListener {
     ImageSetup IS = new ImageSetup();
@@ -28,7 +29,7 @@ class gui implements ActionListener {
     JLabel gicon2 = new JLabel(icon2);
     JLabel gicon3 = new JLabel(icon3);
     JLabel gicon4 = new JLabel(icon4);
-
+    TrafficLight TL = new TrafficLight();
     JLabel grid1 = new JLabel(IS.getImageFromArray(0));
     JLabel grid2 = new JLabel(IS.getImageFromArray(1));
     JLabel grid3 = new JLabel(IS.getImageFromArray(2));
@@ -41,26 +42,34 @@ class gui implements ActionListener {
 
 
 
+    JFrame f = new JFrame("Traffic Build");
+    JFrame f2 = new JFrame("Traffic Simulation");
+
+    JPanel overlay = new JPanel();
+    JPanel content = new JPanel();
+    JPanel gridPanel = new JPanel();
+
     public gui() {
 
 
 
         //Main Window
-        JFrame f = new JFrame("Traffic Sim");
 
-        JPanel overlay = new JPanel();
-        JPanel content = new JPanel();
-        overlay.setLayout(new OverlayLayout(overlay));
 
         content.setLayout(new BorderLayout());
+
+
 
         JPanel menu = new JPanel();
         menu.setLayout(new GridLayout(5, 1));
 
         menu.setSize(200, 600);
 
-        JPanel gridPanel = new JPanel();
+
         gridPanel.setLayout(new GridLayout(3, 3));
+        overlay.setLayout(new OverlayLayout(overlay));
+        overlay.add(gridPanel);
+
         menu.setSize(600, 600);
 
         statusbar = new JLabel("default");
@@ -70,7 +79,6 @@ class gui implements ActionListener {
         buttonsPanel2.setLayout(new GridLayout(2, 2));
 
 
-        TrafficLight TL = new TrafficLight();
 
 
 
@@ -80,17 +88,19 @@ class gui implements ActionListener {
         JLabel rdStr8 = new JLabel(micon4, JLabel.CENTER);
         JLabel rdXsec = new JLabel(micon3, JLabel.CENTER);
         JLabel rdTsec = new JLabel(micon2, JLabel.CENTER);
-        
-        JButton startBtn =new JButton("SAVE");
-        JButton stopBtn =new JButton("LOAD");
-        
+
+        JButton saveBtn =new JButton("SAVE");
+        JButton loadBtn =new JButton("LOAD");
+        JButton runSim =new JButton("run Sim");
+
         rdCnr.addMouseListener(handler);
         rdStr8.addMouseListener(handler);
         rdXsec.addMouseListener(handler);
         rdTsec.addMouseListener(handler);
         //Listeners are created here
-        startBtn.addMouseListener(handler);
-        stopBtn.addMouseListener(handler);
+        saveBtn.addMouseListener(handler);
+        loadBtn.addMouseListener(handler);
+        runSim.addMouseListener(handler);
         grid1.addMouseListener(handler); //for mouse but not motion
         grid2.addMouseListener(handler); //for motion events
         grid3.addMouseListener(handler); //for motion events
@@ -108,9 +118,9 @@ class gui implements ActionListener {
         buttonsPanel2.add(rdStr8);
 
         menu.add(buttonsPanel2);
-        menu.add(startBtn);
-        menu.add(stopBtn);
-        menu.add(TL);
+        menu.add(saveBtn);
+        menu.add(loadBtn);
+        menu.add(runSim);
 
         gridPanel.add(grid1);
         gridPanel.add(grid2);
@@ -122,11 +132,11 @@ class gui implements ActionListener {
         gridPanel.add(grid8);
         gridPanel.add(grid9);
 
-        content.add(gridPanel, BorderLayout.CENTER);
+        content.add(overlay, BorderLayout.CENTER);
         content.add(menu, BorderLayout.WEST);
-        overlay.add(content,BorderLayout.CENTER);
+       // overlay.add(content,BorderLayout.CENTER);
 
-        f.add(overlay,BorderLayout.CENTER);
+        f.add(content,BorderLayout.CENTER);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(690, 650);
 
@@ -140,93 +150,40 @@ class gui implements ActionListener {
         if (DP.getPressX()<100 && DP.getPressY()<200){
             grid1= gicon1;
             statusbar.setText(String.format("Action acknowledged"));
+
         }
     }
 
-
-
-
-
-
-
-
-    // finally our handler class
-    public class Handlerclass2 implements MouseListener, MouseMotionListener {
-
-
-        public void mouseClicked(MouseEvent event) {
-            // whenever the mouse is states the position where it clicked with x and y in the statusbar
-            // statusbar.setText(String.format("Clicked at %d, %d", event.getXOnScreen(), event.getYOnScreen()));
-            System.out.println("Hello");
-        }
-
-        public void mousePressed(MouseEvent event) {
-           
-        }
-        public void mouseReleased(MouseEvent event) {
-           
-        }
-        //when the mouse entered the area(our window) this happens
-        public void mouseEntered(MouseEvent event){
-
-
-      
-
-            // mousepanel.setBackground(Color.RED);
-
-        }
-        // when mouse exists the window this happens
-        public void mouseExited(MouseEvent event) {
-        
-        }
-
-        // these are mouse Motion listeners
-        public void mouseDragged(MouseEvent event) {
-            statusbar.setText("u r dragging the mouse!!");
-        }
-        public void mouseMoved(MouseEvent event) {
-            //DP.setX(event.getXOnScreen());
-            // DP.setY(event.getYOnScreen());
-            //  statusbar.setText(String.format("X: %d & Y: %d",DP.getX(),DP.getY()));
-        }
-
-
-
-
-    }
     // finally our handler class
     public class Handlerclass implements MouseListener, MouseMotionListener {
 
 
         public void mouseClicked(MouseEvent event) {
+
+            Random randomGenerator = new Random();
+            int TLCondition = randomGenerator.nextInt(3) + 1;
+            TL.setTrafficLightCondition(TLCondition);
             // whenever the mouse is states the position where it clicked with x and y in the statusbar
             // statusbar.setText(String.format("Clicked at %d, %d", event.getXOnScreen(), event.getYOnScreen()));
-            if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>70 && DP.getPressY()<267){
-                CsvWriter saveGame;
-
-                saveGame = new CsvWriter();
-                saveGame.setImageIcon(0, DP.getCond(0));
-                saveGame.setImageIcon(1, DP.getCond(1));
-                saveGame.setImageIcon(2, DP.getCond(2));
-                saveGame.setImageIcon(3, DP.getCond(3));
-                saveGame.setImageIcon(4, DP.getCond(4));
-                saveGame.setImageIcon(5, DP.getCond(5));
-                saveGame.setImageIcon(6, DP.getCond(6));
-                saveGame.setImageIcon(7, DP.getCond(7));
-                saveGame.setImageIcon(8, DP.getCond(8));
-                saveGame.Save();
-
+            if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>70 && DP.getPressY()<270){
+                SaveGame();
             }
 
-            if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>268 && DP.getPressY()<368) {
+            if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>271 && DP.getPressY()<370) {
 
                 try {
-                    LoadGame LG = new LoadGame();
+                    LoadGame();
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
 
+            if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>371 && DP.getPressY()<470) {
+                SaveGame();
+               f.dispose();
+               new RunSim();
+            }
         }
 
         public void mousePressed(MouseEvent event) {
@@ -281,15 +238,16 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 0);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid1.setIcon(icon3);
+                grid1.setIcon(icon2);
+                grid1.add(new TrafficLight());
                 DP.InputCondition(3, 0);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid1.setIcon(icon4);
+                grid1.setIcon(icon3);
                 DP.InputCondition(4, 0);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid1.setIcon(icon2);
+                grid1.setIcon(icon4);
                 DP.InputCondition(2, 0);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
@@ -303,15 +261,15 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 1);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid2.setIcon(icon3);
+                grid2.setIcon(icon2);
                 DP.InputCondition(3, 1);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid2.setIcon(icon4);
+                grid2.setIcon(icon3);
                 DP.InputCondition(4, 1);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid2.setIcon(icon2);
+                grid2.setIcon(icon4);
                 DP.InputCondition(2, 1);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
@@ -323,15 +281,15 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 2);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid3.setIcon(icon3);
+                grid3.setIcon(icon2);
                 DP.InputCondition(3, 2);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid3.setIcon(icon4);
+                grid3.setIcon(icon3);
                 DP.InputCondition(4, 2);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 230 && DP.getReleaseY() > 30) {
-                grid3.setIcon(icon2);
+                grid3.setIcon(icon4);
                 DP.InputCondition(2, 2);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
@@ -343,15 +301,15 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 3);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid4.setIcon(icon3);
+                grid4.setIcon(icon2);
                 DP.InputCondition(3, 3);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid4.setIcon(icon4);
+                grid4.setIcon(icon3);
                 DP.InputCondition(4, 3);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid4.setIcon(icon2);
+                grid4.setIcon(icon4);
                 DP.InputCondition(2, 3);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
@@ -365,15 +323,15 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 4);
                 System.out.println(String.format("Action acknowledged 0"));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid5.setIcon(icon3);
+                grid5.setIcon(icon2);
                 DP.InputCondition(3, 4);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid5.setIcon(icon4);
+                grid5.setIcon(icon3);
                 DP.InputCondition(4, 4);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid5.setIcon(icon2);
+                grid5.setIcon(icon4);
                 DP.InputCondition(2, 4);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
@@ -386,15 +344,15 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 5);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid6.setIcon(icon3);
+                grid6.setIcon(icon2);
                 DP.InputCondition(3, 5);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid6.setIcon(icon4);
+                grid6.setIcon(icon3);
                 DP.InputCondition(4, 5);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 433 && DP.getReleaseY() > 230) {
-                grid6.setIcon(icon2);
+                grid6.setIcon(icon4);
                 DP.InputCondition(2, 5);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
@@ -403,7 +361,7 @@ class gui implements ActionListener {
                 if (DP.getPressX() == DP.getReleaseX()) {
                     DP.setStr8Rotation();
                     DP.InputCondition(41, 5);
-                    grid6.setIcon(new RotatedIcon(icon4, DP.getStr8Rotation()));
+                    grid6.setIcon(new RotatedIcon(icon3, DP.getStr8Rotation()));
                     System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
                 }
             }
@@ -415,15 +373,15 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 6);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid7.setIcon(icon3);
+                grid7.setIcon(icon2);
                 DP.InputCondition(3, 6);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid7.setIcon(icon4);
+                grid7.setIcon(icon3);
                 DP.InputCondition(4, 6);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 86 && DP.getReleaseX() < 275 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid7.setIcon(icon2);
+                grid7.setIcon(icon4);
                 DP.InputCondition(2, 6);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
@@ -437,15 +395,15 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 7);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid8.setIcon(icon3);
+                grid8.setIcon(icon2);
                 DP.InputCondition(3, 7);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid8.setIcon(icon4);
+                grid8.setIcon(icon3);
                 DP.InputCondition(4, 7);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 286 && DP.getReleaseX() < 484 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid8.setIcon(icon2);
+                grid8.setIcon(icon4);
                 DP.InputCondition(2, 7);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
@@ -458,19 +416,79 @@ class gui implements ActionListener {
                 DP.InputCondition(1, 8);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() < 86 && DP.getPressY() > 30 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid9.setIcon(icon3);
+                grid9.setIcon(icon2);
                 DP.InputCondition(3, 8);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 10 && DP.getPressX() < 46 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid9.setIcon(icon4);
+                grid9.setIcon(icon3);
                 DP.InputCondition(4, 8);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             } else if (DP.getPressX() > 46 && DP.getPressX() < 86 && DP.getPressY() > 86 && DP.getPressY() < 160 && DP.getReleaseX() > 491 && DP.getReleaseX() < 686 && DP.getReleaseY() < 633 && DP.getReleaseY() > 430) {
-                grid9.setIcon(icon2);
+                grid9.setIcon(icon4);
                 DP.InputCondition(2, 8);
                 System.out.println(String.format("Idx1: %d Idx2: %d Idx3: %d Idx4: %d Idx5: %d Idx6: %d Idx7: %d Idx8: %d Idx9: %d ", DP.getCond(0), DP.getCond(1), DP.getCond(2), DP.getCond(3), DP.getCond(4), DP.getCond(5), DP.getCond(6), DP.getCond(7), DP.getCond(8)));
             }
         }
+    }
+
+    private void SaveGame() {
+        CsvWriter saveGame;
+
+        saveGame = new CsvWriter();
+        saveGame.setImageIcon(0, DP.getCond(0));
+        //IS.InputImageIntoArray(0,DP.getCond(0));
+        saveGame.setImageIcon(1, DP.getCond(1));
+        //IS.InputImageIntoArray(1,DP.getCond(1));
+        saveGame.setImageIcon(2, DP.getCond(2));
+        // IS.InputImageIntoArray(2,DP.getCond(2));
+        saveGame.setImageIcon(3, DP.getCond(3));
+        // IS.InputImageIntoArray(3,DP.getCond(3));
+        saveGame.setImageIcon(4, DP.getCond(4));
+        //  IS.InputImageIntoArray(4,DP.getCond(4));
+        saveGame.setImageIcon(5, DP.getCond(5));
+        // IS.InputImageIntoArray(5,DP.getCond(5));
+        saveGame.setImageIcon(6, DP.getCond(6));
+        // IS.InputImageIntoArray(6,DP.getCond(6));
+        saveGame.setImageIcon(7, DP.getCond(7));
+        //  IS.InputImageIntoArray(7,DP.getCond(7));
+        saveGame.setImageIcon(8, DP.getCond(8));
+        //  IS.InputImageIntoArray(8,DP.getCond(8));
+        saveGame.Save();
+    }
+
+    private void LoadGame() throws FileNotFoundException {
+        LoadGame LG = new LoadGame();
+        int[] LoadedGame = LG.getGridArray();
+
+        DP.InputCondition(LoadedGame[0],0);
+        DP.InputCondition(LoadedGame[1],1);
+        DP.InputCondition(LoadedGame[2],2);
+        DP.InputCondition(LoadedGame[3],3);
+        DP.InputCondition(LoadedGame[4],4);
+        DP.InputCondition(LoadedGame[5],5);
+        DP.InputCondition(LoadedGame[6],6);
+        DP.InputCondition(LoadedGame[7],7);
+        DP.InputCondition(LoadedGame[8],8);
+
+        IS.InputImageIntoArray(0,LoadedGame[0]);
+        IS.InputImageIntoArray(1,LoadedGame[1]);
+        IS.InputImageIntoArray(2,LoadedGame[2]);
+        IS.InputImageIntoArray(3,LoadedGame[3]);
+        IS.InputImageIntoArray(4,LoadedGame[4]);
+        IS.InputImageIntoArray(5,LoadedGame[5]);
+        IS.InputImageIntoArray(6,LoadedGame[6]);
+        IS.InputImageIntoArray(7,LoadedGame[7]);
+        IS.InputImageIntoArray(8,LoadedGame[8]);
+
+        grid1.setIcon(IS.getImageFromArray(0));
+        grid2.setIcon(IS.getImageFromArray(1));
+        grid3.setIcon(IS.getImageFromArray(2));
+        grid4.setIcon(IS.getImageFromArray(3));
+        grid5.setIcon(IS.getImageFromArray(4));
+        grid6.setIcon(IS.getImageFromArray(5));
+        grid7.setIcon(IS.getImageFromArray(6));
+        grid8.setIcon(IS.getImageFromArray(7));
+        grid9.setIcon(IS.getImageFromArray(8));
     }
 
 }

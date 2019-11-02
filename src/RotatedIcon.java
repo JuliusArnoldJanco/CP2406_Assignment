@@ -3,7 +3,7 @@ import java.awt.Graphics2D;
 import java.awt.Graphics;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import javax.swing.Icon;
+import javax.swing.*;
 
 /**
  *  The RotatedIcon allows you to change the orientation of an Icon by
@@ -17,7 +17,7 @@ import javax.swing.Icon;
  * <li>ABOUT_CENTER - the icon is rotated by the specified degrees about its center.
  * </ul>
  */
-public class RotatedIcon implements Icon
+public class RotatedIcon extends ImageIcon implements Icon
 {
     public enum Rotate
     {

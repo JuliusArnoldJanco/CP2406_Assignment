@@ -67,7 +67,7 @@ class CsvWriter {
 
             writer.write(sb2.toString());
 
-            System.out.println("done! 2nd");
+            System.out.println(sb2.toString());
 
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
