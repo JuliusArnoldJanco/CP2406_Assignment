@@ -16,7 +16,7 @@ public class TrafficLight extends JPanel implements ActionListener {
 
     private JPanel panel1;
 
-   Timer t = new Timer(500,this);
+   Timer t = new Timer(5000,this);
 
 public TrafficLight() {
 
@@ -34,6 +34,7 @@ public TrafficLight() {
         if (TRAFFICLIGHT_CONDITION == 1) {
             g.setColor(Color.RED);     //light red
             g.fillOval(5, 2, 10, 10);
+
         }
         else{ g.setColor(Color.black);     //light red off
             g.fillOval(5, 2, 10, 10);}
