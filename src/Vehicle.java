@@ -1,26 +1,22 @@
-package SANDBOX;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class TrafficLight extends JPanel implements ActionListener {
+public class Vehicle extends JPanel implements ActionListener {
 
-   final int TL_WIDTH = 40/2;
-   final int TL_HEIGHT = 80/2+10;
-   final int LIGHT_RADIUS =5;
-   int TRAFFICLIGHT_CONDITION;
+    final int TL_WIDTH = 40/2;
+    final int TL_HEIGHT = 80/2+10;
+    final int LIGHT_RADIUS =5;
+    int TRAFFICLIGHT_CONDITION;
 
     private JPanel panel1;
 
-   //Timer t = new Timer(4000,this);
+    //Timer t = new Timer(4000,this);
 
-public TrafficLight() {
+    public Vehicle() {
 
-}
+    }
     public void paint(Graphics g){
         this.setSize(20,50);
 
@@ -28,7 +24,7 @@ public TrafficLight() {
 
 
 
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(Color.blue);
 
         g.fillRect(0,0,TL_WIDTH,TL_HEIGHT);
         if (TRAFFICLIGHT_CONDITION == 1) {
@@ -51,15 +47,11 @@ public TrafficLight() {
         }
         else{g.setColor(Color.black);      //light green
             g.fillOval(5, 32, 10, 10);}
-       //t.start();
+        //t.start();
 
     }
     public void actionPerformed(ActionEvent e) {
         repaint();
 
     }
-    public void setTrafficLightCondition(int Condition){TRAFFICLIGHT_CONDITION = Condition;}
-    public int getTrafficLightCondition(){return TRAFFICLIGHT_CONDITION;}
 }
-
-
