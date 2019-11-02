@@ -182,7 +182,11 @@ class gui implements ActionListener {
             if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>371 && DP.getPressY()<470) {
                 SaveGame();
                f.dispose();
-               new RunSim();
+                try {
+                    new RunSim();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

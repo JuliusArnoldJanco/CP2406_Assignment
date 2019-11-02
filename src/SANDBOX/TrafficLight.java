@@ -18,18 +18,16 @@ public class TrafficLight extends JPanel implements ActionListener {
 
    // Timer t = new Timer(5,this);
 
+public TrafficLight() {
 
-
-    private Rectangle myOffice = new Rectangle(150, 50, 32, 27);
+}
     public void paint(Graphics g){
-        this.setSize(80,160);
+        this.setSize(20,50);
 
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
 
-        g2d.setColor(Color.RED);
-        g2d.translate(200,400);
-        g2d.draw(myOffice);
+
         g.setColor(Color.black);
         g.fillRect(0,0,TL_WIDTH,TL_HEIGHT);
         if (TRAFFICLIGHT_CONDITION == 1) {
@@ -60,3 +58,4 @@ public class TrafficLight extends JPanel implements ActionListener {
     }
     public void setTrafficLightCondition(int Condition){TRAFFICLIGHT_CONDITION = Condition;}
 }
+

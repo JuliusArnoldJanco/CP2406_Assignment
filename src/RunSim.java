@@ -1,6 +1,7 @@
 
 // SecondFrame.java
 import SANDBOX.DataPoints;
+import SANDBOX.TrafficLight;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +11,15 @@ public class RunSim {
     private JFrame frame = new JFrame("Second");
 
     private JLayeredPane lpane = new JLayeredPane();
-    private JPanel panelBlue = new JPanel();
-    private JPanel panelGreen = new JPanel();
+    JLayeredPane content = new JLayeredPane();
+
+    JPanel gridPanel = new JPanel();
 
     DataPoints DP = new DataPoints();
     ImageSetup IS = new ImageSetup();
+    TrafficLight TL = new TrafficLight();
+    TrafficLight TL2 = new TrafficLight();
+
 
     JLabel grid1 = new JLabel(IS.getImageFromArray(0));
     JLabel grid2 = new JLabel(IS.getImageFromArray(1));
@@ -28,21 +33,37 @@ public class RunSim {
 
 
 
-    public RunSim() {
+    public RunSim() throws FileNotFoundException {
+        LoadGridConditions();
+        TL.setTrafficLightCondition(3);
+        TL2.setTrafficLightCondition(2);
+        gridPanel.setLayout(new GridLayout(3, 3));
+        gridPanel.add(grid1);
+        gridPanel.add(grid2);
+        gridPanel.add(grid3);
+        gridPanel.add(grid4);
+        gridPanel.add(grid5);
+        gridPanel.add(grid6);
+        gridPanel.add(grid7);
+        gridPanel.add(grid8);
+        gridPanel.add(grid9);
+        gridPanel.setOpaque(true);
 
-        frame.setPreferredSize(new Dimension(600, 400));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(600, 600));
         frame.setLayout(new BorderLayout());
         frame.add(lpane, BorderLayout.CENTER);
         lpane.setBounds(0, 0, 600, 400);
-        panelBlue.setBackground(Color.BLUE);
-        panelBlue.setBounds(0, 0, 600, 400);
-        panelBlue.setOpaque(true);
-        panelGreen.setBackground(Color.GREEN);
-        panelGreen.setBounds(200, 100, 300, 100);
-        panelGreen.setOpaque(true);
-        lpane.add(panelBlue, new Integer(0), 0);
-        lpane.add(panelGreen, new Integer(1), 0);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gridPanel.setBackground(Color.BLUE);
+        gridPanel.setBounds(0, 0, 600, 600);
+        gridPanel.setOpaque(true);
+
+        TL.setBounds(200, 300, 20, 50);
+        TL2.setBounds(300, 300, 20, 50);
+
+        lpane.add(gridPanel, new Integer(0), 0);
+        lpane.add(TL, new Integer(1), 0);
+        lpane.add(TL2, new Integer(1), 0);
         frame.pack();
         frame.setVisible(true);
 
@@ -50,7 +71,7 @@ public class RunSim {
 
 
 
-    private void LoadGame() throws FileNotFoundException {
+    private void LoadGridConditions() throws FileNotFoundException {
         LoadGame LG = new LoadGame();
         int[] LoadedGame = LG.getGridArray();
 
@@ -83,5 +104,6 @@ public class RunSim {
         grid7.setIcon(IS.getImageFromArray(6));
         grid8.setIcon(IS.getImageFromArray(7));
         grid9.setIcon(IS.getImageFromArray(8));
+        System.out.println("Loaded Game, function Ran.");
     }
 }
