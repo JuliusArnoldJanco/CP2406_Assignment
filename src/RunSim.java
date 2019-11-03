@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class RunSim extends JPanel implements ActionListener {
     private JFrame frame = new JFrame("Second");
-    Timer t = new Timer(5,this);
+    Timer t = new Timer(10,this);
 
     private JLayeredPane lpane = new JLayeredPane();
     JLayeredPane content = new JLayeredPane();
@@ -23,7 +23,7 @@ public class RunSim extends JPanel implements ActionListener {
     ImageSetup IS = new ImageSetup();
 
     int timeInSeconds = 1;
-
+    LoadGame LG = new LoadGame();
     private JLabel grid1 = new JLabel(IS.getImageFromArray(0));
     private JLabel grid2 = new JLabel(IS.getImageFromArray(1));
     private JLabel grid3 = new JLabel(IS.getImageFromArray(2));
@@ -70,15 +70,17 @@ public class RunSim extends JPanel implements ActionListener {
     private TrafficLight TL34 = new TrafficLight();
     private TrafficLight TL35 = new TrafficLight();
     private TrafficLight TL36 = new TrafficLight();
-    private TrafficLight TL50 = new TrafficLight();
+    private Vehicle TL50 = new Vehicle();
+    private Vehicle TL51 = new Vehicle();
+
 
 
 
     private  int rSeed = 0;
-    private int carx = 0;
-    private int cary =-2000;
+    private int carx = 100;
+    private int cary =-20;
 
-
+    private int counter =0;
 
     private Random randomGenerator = new Random();
     private int TLCondition;
@@ -135,7 +137,7 @@ public class RunSim extends JPanel implements ActionListener {
 
 
     private void LoadGridConditions() throws FileNotFoundException {
-        LoadGame LG = new LoadGame();
+
 
         int[] LoadedGame = LG.getGridArray();
 
@@ -176,63 +178,73 @@ public class RunSim extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
-        rSeed += 10;
+        rSeed += 1;
+        car1YDirection();
+        car1XDirection();
+        if (cary>600){cary=0;}
 
+        MoveCar(TL50, cary, lpane);
+        System.out.println(GridType(cary,300)[0]+" "+GridType(cary,300)[1]);
+        if (rSeed == timeInSeconds*10) {
+            RandomLightChanges();
 
-            if(cary>600){cary=0;
-                TL50.setBounds(100, cary, 20, 50);
-                lpane.add(TL50, (2), 0);}
-
-            if (cary <200 && TL3.getTrafficLightCondition()!=1) {
-                carx += 5;
-                cary += 5;
-                TL50.setBounds(100, cary, 20, 50);
-                lpane.add(TL50, (2), 0);
-            }
-            else if (cary <200 && TL3.getTrafficLightCondition()==1) {
-            TL50.setBounds(100, cary, 20, 50);
-            lpane.add(TL50, (2), 0);}
-
-
-
-            else if (cary >199 && cary < 400 && TL16.getTrafficLightCondition()==1) {
-                TL50.setBounds(100, cary, 20, 50);
-                lpane.add(TL50, (2), 0);
-            }
-            else if (cary >199 && cary < 400 && TL16.getTrafficLightCondition()!=1) {
-                carx += 5;
-                cary += 5;
-                TL50.setBounds(100, cary, 20, 50);
-                lpane.add(TL50, (2), 0);
-            }
-            else if (cary >399 && TL28.getTrafficLightCondition()==1) {
-            TL50.setBounds(100, cary, 20, 50);
-            lpane.add(TL50, (2), 0);}
-
-            else if (cary >399 && TL28.getTrafficLightCondition()!=1) {
-                carx += 5;
-                cary += 5;
-            TL50.setBounds(100, cary, 20, 50);
-            lpane.add(TL50, (2), 0);}
-
-
-        RandomLightChanges();
-        if (rSeed == timeInSeconds*1000) {
-            System.out.println("G1: "+DP.getCond(0)+" G2: "+DP.getCond(1)+" G3: "+DP.getCond(2)+" G4: "+DP.getCond(3)+" G5: "+DP.getCond(4)+" G6: "+DP.getCond(5)+" G7: "+DP.getCond(6)+" G8: "+DP.getCond(7)+" G9: "+DP.getCond(8));
             for (int i = 0; i < DP.getGridIcons().length; i++) {
-
                 ChangeTrafficLights(i);
-
-
             }
-        } else if (rSeed > timeInSeconds*1000){rSeed =0;}
+        } else if (rSeed > timeInSeconds*20){rSeed =0; counter +=1;}
         else{}
+        //System.out.println(counter);
+    }
+
+    public static void MoveCar(Vehicle TL50, int cary, JLayeredPane lpane) {
+        TL50.setBounds(cary,300,60,30);
+        lpane.add(TL50, (3), 0);
+    }
+
+    public void car1YDirection() {
+        cary+=5;
+    }
+    public void car1XDirection() {
+        carx+=5;
+    }
 
 
-
-        //System.out.println(TL1Condition);
-
-
+    public int[] GridType(int x, int y){
+        int[] type = {0,0} ;
+        if( x > 1 && x < 201 && y>0 && y<201){
+            type[0] = LG.getGridArray()[0];
+            type[1] = 0;
+        }
+        else if( x > 200 && x < 401 && y>0 && y<201){
+            type[0] = LG.getGridArray()[1];
+            type[1] = 1;
+        }
+        else if( x > 400 && x < 601 && y>0 && y<201){
+            type[0] = LG.getGridArray()[2];
+            type[1] = 2;
+        }
+        else if( x > 1 && x < 201 && y>200 && y<401){
+            type[0] = LG.getGridArray()[3];
+            type[1] = 3;
+        }
+        else if( x > 200 && x < 401 && y>200 && y<401){
+            type[0] = LG.getGridArray()[4];
+            type[1] = 4;
+        }
+        else if( x > 400 && x < 601 && y>200 && y<401){
+            type[0] = LG.getGridArray()[5];
+            type[1] = 5;
+        }
+        else if( x > 1 && x < 201 && y>400 && y<601){
+            type[0] = LG.getGridArray()[6];
+            type[1] = 6;
+        }
+        else if( x > 200 && x < 401 && y>400 && y<601){
+            type[0] = LG.getGridArray()[7];
+            type[1] = 7;
+        }
+        else{ type[0] = LG.getGridArray()[8]; type[1] = 8;}
+        return type;
     }
 
     public void RandomLightChanges() {
@@ -279,7 +291,7 @@ public class RunSim extends JPanel implements ActionListener {
         if (DP.getCond(i) == 3) {
 
             if (i == 0) {
-                TL.setBounds(230 - 210, 30, 20, 50);
+                TL.setBounds(230 - 210, 0, 20, 50);
                 TL.setTrafficLightCondition(TLCondition);
                 TL2.setBounds(350 - 210, 120, 20, 50);
                 TL2.setTrafficLightCondition(TLCondition);
@@ -297,18 +309,17 @@ public class RunSim extends JPanel implements ActionListener {
                 TL4.setBounds(290 - 210, 140, 20, 50);
 
 
-                lpane.add(TL, (1), 0);
-                lpane.add(TL2, (1), 0);
-                lpane.add(TL3, (1), 0);
-                lpane.add(TL4, (1), 0);
+                lpane.add(TL, (3), 0);
+                lpane.add(TL2, (3), 0);
+                lpane.add(TL3, (3), 0);
+                lpane.add(TL4, (3), 0);
 
             } else if (i == 1) {
 
-                TL5.setBounds(230, 30, 20, 50);
+                TL5.setBounds(230, 0, 20, 50);
                 TL5.setTrafficLightCondition(TL2Condition);
                 TL6.setBounds(350, 120, 20, 50);
                 TL6.setTrafficLightCondition(TL2Condition);
-                System.out.println("Traffic lights in a cross section at grid 1");
                 if (TL2Condition == 1) {
                     TL7.setTrafficLightCondition(3);
                     TL8.setTrafficLightCondition(3);
@@ -322,16 +333,16 @@ public class RunSim extends JPanel implements ActionListener {
                 TL7.setBounds(290, 0, 20, 50);
                 TL8.setBounds(290, 140, 20, 50);
 
-                lpane.add(TL5, (1), 0);
-                lpane.add(TL6, (1), 0);
-                lpane.add(TL7, (1), 0);
-                lpane.add(TL8, (1), 0);
+                lpane.add(TL5, (3), 0);
+                lpane.add(TL6, (3), 0);
+                lpane.add(TL7, (3), 0);
+                lpane.add(TL8, (3), 0);
 
 
             } else if (i == 2) {
-                TL9.setBounds(230 + 210, 30, 20, 50);
+                TL9.setBounds(230 + 210, 0, 20, 50);
                 TL9.setTrafficLightCondition(TL3Condition);
-                TL10.setBounds(350 + 210, 120, 20, 50);
+                TL10.setBounds(350 + 210, 140, 20, 50);
                 TL10.setTrafficLightCondition(TL3Condition);
                 if (TL3Condition == 1) {
                     TL11.setTrafficLightCondition(3);
@@ -345,14 +356,14 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 TL11.setBounds(290 + 210, 0, 20, 50);
                 TL12.setBounds(290 + 210, 140, 20, 50);
-                lpane.add(TL9, (1), 0);
-                lpane.add(TL10, (1), 0);
-                lpane.add(TL11, (1), 0);
-                lpane.add(TL12, (1), 0);
+                lpane.add(TL9, (3), 0);
+                lpane.add(TL10, (3), 0);
+                lpane.add(TL11, (3), 0);
+                lpane.add(TL12, (3), 0);
             } else if (i == 3) {
-                TL13.setBounds(230 - 210, 220, 20, 50);
+                TL13.setBounds(230 - 210, 190, 20, 50);
                 TL13.setTrafficLightCondition(TL4Condition);
-                TL14.setBounds(350 - 210, 330, 20, 50);
+                TL14.setBounds(350 - 210, 340, 20, 50);
                 TL14.setTrafficLightCondition(TL4Condition);
                 if (TL4Condition == 1) {
                     TL15.setTrafficLightCondition(3);
@@ -366,14 +377,14 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 TL15.setBounds(290 - 210, 205, 20, 50);
                 TL16.setBounds(290 - 210, 330, 20, 50);
-                lpane.add(TL13, (1), 0);
-                lpane.add(TL14, (1), 0);
-                lpane.add(TL15, (1), 0);
-                lpane.add(TL16, (1), 0);
+                lpane.add(TL13, (3), 0);
+                lpane.add(TL14, (3), 0);
+                lpane.add(TL15, (3), 0);
+                lpane.add(TL16, (3), 0);
             } else if (i == 4) {
-                TL17.setBounds(230, 220, 20, 50);
+                TL17.setBounds(230, 190, 20, 50);
                 TL17.setTrafficLightCondition(TL5Condition);
-                TL18.setBounds(350, 330, 20, 50);
+                TL18.setBounds(350, 340, 20, 50);
                 TL18.setTrafficLightCondition(TL5Condition);
                 if (TL5Condition == 1) {
                     TL19.setTrafficLightCondition(3);
@@ -387,14 +398,14 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 TL19.setBounds(290, 205, 20, 50);
                 TL20.setBounds(290, 330, 20, 50);
-                lpane.add(TL17, (1), 0);
-                lpane.add(TL18, (1), 0);
-                lpane.add(TL19, (1), 0);
-                lpane.add(TL20, (1), 0);
+                lpane.add(TL17, (3), 0);
+                lpane.add(TL18, (3), 0);
+                lpane.add(TL19, (3), 0);
+                lpane.add(TL20, (3), 0);
             } else if (i == 5) {
-                TL21.setBounds(230 + 210, 220, 20, 50);
+                TL21.setBounds(230 + 210, 190, 20, 50);
                 TL21.setTrafficLightCondition(TL6Condition);
-                TL22.setBounds(350 + 210, 330, 20, 50);
+                TL22.setBounds(350 + 210, 340, 20, 50);
                 TL22.setTrafficLightCondition(TL6Condition);
                 if (TL6Condition == 1) {
                     TL23.setTrafficLightCondition(3);
@@ -408,14 +419,14 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 TL23.setBounds(290 + 210, 205, 20, 50);
                 TL24.setBounds(290 + 210, 330, 20, 50);
-                lpane.add(TL21, (1), 0);
-                lpane.add(TL22, (1), 0);
-                lpane.add(TL23, (1), 0);
-                lpane.add(TL24, (1), 0);
+                lpane.add(TL21, (3), 0);
+                lpane.add(TL22, (3), 0);
+                lpane.add(TL23, (3), 0);
+                lpane.add(TL24, (3), 0);
             } else if (i == 6) {
-                TL25.setBounds(230 - 210, 220 + 210, 20, 50);
+                TL25.setBounds(230 - 210, 220 + 180, 20, 50);
                 TL25.setTrafficLightCondition(TL7Condition);
-                TL26.setBounds(350 - 210, 330 + 210, 20, 50);
+                TL26.setBounds(350 - 210, 330 + 230, 20, 50);
                 TL26.setTrafficLightCondition(TL7Condition);
                 if (TL7Condition == 1) {
                     TL27.setTrafficLightCondition(3);
@@ -429,14 +440,14 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 TL27.setBounds(290 - 210, 205 + 210, 20, 50);
                 TL28.setBounds(290 - 210, 330 + 210, 20, 50);
-                lpane.add(TL25, (1), 0);
-                lpane.add(TL26, (1), 0);
-                lpane.add(TL27, (1), 0);
-                lpane.add(TL28, (1), 0);
+                lpane.add(TL25, (3), 0);
+                lpane.add(TL26, (3), 0);
+                lpane.add(TL27, (3), 0);
+                lpane.add(TL28, (3), 0);
             } else if (i == 7) {
-                TL29.setBounds(230, 220 + 210, 20, 50);
+                TL29.setBounds(230, 220 + 180, 20, 50);
                 TL29.setTrafficLightCondition(TL8Condition);
-                TL30.setBounds(350, 330 + 210, 20, 50);
+                TL30.setBounds(350, 330 + 230, 20, 50);
                 TL30.setTrafficLightCondition(TL8Condition);
                 if (TL8Condition == 1) {
                     TL31.setTrafficLightCondition(3);
@@ -450,14 +461,14 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 TL31.setBounds(290, 205 + 210, 20, 50);
                 TL32.setBounds(290, 330 + 210, 20, 50);
-                lpane.add(TL29, (1), 0);
-                lpane.add(TL30, (1), 0);
-                lpane.add(TL31, (1), 0);
-                lpane.add(TL32, (1), 0);
+                lpane.add(TL29, (3), 0);
+                lpane.add(TL30, (3), 0);
+                lpane.add(TL31, (3), 0);
+                lpane.add(TL32, (3), 0);
             } else {
-                TL33.setBounds(230 + 210, 220 + 210, 20, 50);
+                TL33.setBounds(230 + 210, 220 + 180, 20, 50);
                 TL33.setTrafficLightCondition(TL9Condition);
-                TL34.setBounds(350 + 210, 330 + 210, 20, 50);
+                TL34.setBounds(350 + 210, 330 + 230, 20, 50);
                 TL34.setTrafficLightCondition(TL9Condition);
                 if (TL9Condition == 1) {
                     TL35.setTrafficLightCondition(3);
@@ -471,10 +482,10 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 TL35.setBounds(290 + 210, 205 + 210, 20, 50);
                 TL36.setBounds(290 + 210, 330 + 210, 20, 50);
-                lpane.add(TL33, (1), 0);
-                lpane.add(TL34, (1), 0);
-                lpane.add(TL35, (1), 0);
-                lpane.add(TL36, (1), 0);
+                lpane.add(TL33, (3), 0);
+                lpane.add(TL34, (3), 0);
+                lpane.add(TL35, (3), 0);
+                lpane.add(TL36, (3), 0);
 
             }
         } else if (DP.getCond(i) == 2) {
@@ -493,10 +504,10 @@ public class RunSim extends JPanel implements ActionListener {
                     TL4.setTrafficLightCondition(1);
                 }
                 TL4.setBounds(290 - 210, 140, 20, 50);
-                lpane.add(TL, (1), 0);
-                lpane.add(TL2, (1), 0);
-                lpane.add(TL3, (1), 0);
-                lpane.add(TL4, (1), 0);
+                lpane.add(TL, (3), 0);
+                lpane.add(TL2, (3), 0);
+                lpane.add(TL3, (3), 0);
+                lpane.add(TL4, (3), 0);
             } else if (i == 1) {
                 //Depreciated System.out.println("Condition Met: DP.getCond() = 2");
                 TL5.setBounds(230, 30, 20, 50);
@@ -511,10 +522,10 @@ public class RunSim extends JPanel implements ActionListener {
                     TL8.setTrafficLightCondition(1);
                 }
                 TL8.setBounds(290, 140, 20, 50);
-                lpane.add(TL5, (1), 0);
-                lpane.add(TL6, (1), 0);
-                lpane.add(TL7, (1), 0);
-                lpane.add(TL8, (1), 0);
+                lpane.add(TL5, (3), 0);
+                lpane.add(TL6, (3), 0);
+                lpane.add(TL7, (3), 0);
+                lpane.add(TL8, (3), 0);
             } else if (i == 2) {
                 //Depreciated System.out.println("Condition Met: DP.getCond() = 2");
                 TL9.setBounds(230 + 210, 30, 20, 50);
@@ -530,10 +541,10 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 //TL11.setBounds(290+210, 0, 20, 50);
                 TL12.setBounds(290 + 210, 140, 20, 50);
-                lpane.add(TL9, (1), 0);
-                lpane.add(TL10, (1), 0);
-                lpane.add(TL11, (1), 0);
-                lpane.add(TL12, (1), 0);
+                lpane.add(TL9, (3), 0);
+                lpane.add(TL10, (3), 0);
+                lpane.add(TL11, (3), 0);
+                lpane.add(TL12, (3), 0);
             } else if (i == 3) {
                 //Depreciated System.out.println("Condition Met: DP.getCond() = 2");
                 TL13.setBounds(230 - 210, 220, 20, 50);
@@ -549,10 +560,10 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 //TL15.setBounds(290-210, 205, 20, 50);
                 TL16.setBounds(290 - 210, 330, 20, 50);
-                lpane.add(TL13, (1), 0);
-                lpane.add(TL14, (1), 0);
-                lpane.add(TL15, (1), 0);
-                lpane.add(TL16, (1), 0);
+                lpane.add(TL13, (3), 0);
+                lpane.add(TL14, (3), 0);
+                lpane.add(TL15, (3), 0);
+                lpane.add(TL16, (3), 0);
             } else if (i == 4) {
                 //Depreciated System.out.println("Condition Met: DP.getCond() = 2");
                 TL17.setBounds(230, 220, 20, 50);
@@ -568,10 +579,10 @@ public class RunSim extends JPanel implements ActionListener {
                 }
                 //TL19.setBounds(290, 205, 20, 50);
                 TL20.setBounds(290, 330, 20, 50);
-                lpane.add(TL17, (1), 0);
-                lpane.add(TL18, (1), 0);
-                lpane.add(TL19, (1), 0);
-                lpane.add(TL20, (1), 0);
+                lpane.add(TL17, (3), 0);
+                lpane.add(TL18, (3), 0);
+                lpane.add(TL19, (3), 0);
+                lpane.add(TL20, (3), 0);
             } else if (i == 5) {
                 //Depreciated System.out.println("Condition Met: DP.getCond() = 2");
                 TL21.setBounds(230 + 210, 220, 20, 50);
@@ -587,10 +598,10 @@ public class RunSim extends JPanel implements ActionListener {
                     TL24.setTrafficLightCondition(1);
                 }
                 TL24.setBounds(290 + 210, 330, 20, 50);
-                lpane.add(TL21, (1), 0);
-                lpane.add(TL22, (1), 0);
-                lpane.add(TL23, (1), 0);
-                lpane.add(TL24, (1), 0);
+                lpane.add(TL21, (3), 0);
+                lpane.add(TL22, (3), 0);
+                lpane.add(TL23, (3), 0);
+                lpane.add(TL24, (3), 0);
             } else if (i == 6) {
                 //Depreciated System.out.println("Condition Met: DP.getCond() = 2");
                 TL25.setBounds(230 - 210, 220 + 210, 20, 50);
@@ -605,10 +616,10 @@ public class RunSim extends JPanel implements ActionListener {
                     TL28.setTrafficLightCondition(1);
                 }
                 TL28.setBounds(290 - 210, 330 + 210, 20, 50);
-                lpane.add(TL25, (1), 0);
-                lpane.add(TL26, (1), 0);
-                lpane.add(TL27, (1), 0);
-                lpane.add(TL28, (1), 0);
+                lpane.add(TL25, (3), 0);
+                lpane.add(TL26, (3), 0);
+                lpane.add(TL27, (3), 0);
+                lpane.add(TL28, (3), 0);
             } else if (i == 7) {
                 //Depreciated System.out.println("Condition Met: DP.getCond() = 2");
                 TL29.setBounds(230, 220 + 210, 20, 50);
@@ -623,10 +634,10 @@ public class RunSim extends JPanel implements ActionListener {
                     TL32.setTrafficLightCondition(1);
                 }
                 TL32.setBounds(290, 330 + 210, 20, 50);
-                lpane.add(TL29, (1), 0);
-                lpane.add(TL30, (1), 0);
-                lpane.add(TL31, (1), 0);
-                lpane.add(TL32, (1), 0);
+                lpane.add(TL29, (3), 0);
+                lpane.add(TL30, (3), 0);
+                lpane.add(TL31, (3), 0);
+                lpane.add(TL32, (3), 0);
             } else {
                 //Depreciated System.out.println("Condition Met: DP.getCond() = 2");
                 TL33.setBounds(230 + 210, 220 + 210, 20, 50);
@@ -641,10 +652,10 @@ public class RunSim extends JPanel implements ActionListener {
                     TL36.setTrafficLightCondition(1);
                 }
                 TL36.setBounds(290 + 210, 330 + 210, 20, 50);
-                lpane.add(TL33, (1), 0);
-                lpane.add(TL34, (1), 0);
-                lpane.add(TL35, (1), 0);
-                lpane.add(TL36, (1), 0);
+                lpane.add(TL33, (3), 0);
+                lpane.add(TL34, (3), 0);
+                lpane.add(TL35, (3), 0);
+                lpane.add(TL36, (3), 0);
 
             }
         }
