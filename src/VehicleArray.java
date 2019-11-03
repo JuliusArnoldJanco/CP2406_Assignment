@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-
+/*The purpose of this class was to store all the vehicles on the grid*/
 public class VehicleArray extends ArrayList {
 
     Vehicle[] vehicleList = {};

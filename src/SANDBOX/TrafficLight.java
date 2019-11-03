@@ -4,8 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
-import java.util.concurrent.atomic.AtomicReference;
+/*This is the traffic light class
+* paints a traffic light 20*50 and stores its light conditions
+* red =1
+* yellow =2
+* green =3
+* */
+
 
 public class TrafficLight extends JPanel implements ActionListener {
 
@@ -16,7 +21,6 @@ public class TrafficLight extends JPanel implements ActionListener {
 
     private JPanel panel1;
 
-   //Timer t = new Timer(4000,this);
 
 public TrafficLight() {
 
@@ -58,6 +62,7 @@ public TrafficLight() {
         repaint();
 
     }
+    //Getters and setters for the traffic light condition
     public void setTrafficLightCondition(int Condition){TRAFFICLIGHT_CONDITION = Condition;}
     public int getTrafficLightCondition(){return TRAFFICLIGHT_CONDITION;}
 }

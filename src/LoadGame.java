@@ -3,6 +3,11 @@ import java.io.FileNotFoundException;
 import java.nio.file.FileSystemNotFoundException;
 import java.util.Scanner;
 
+
+/*
+* This is the Load game file
+* Load game is performed by opening the save game csv and creating an creating an array with each position in the array is the position of the grid
+* each array cell contains the road type for that grid position */
 public class LoadGame {
 
     int[] gridArray ={0,0,0,0,0,0,0,0,0};

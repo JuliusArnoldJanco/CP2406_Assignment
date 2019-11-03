@@ -1,3 +1,10 @@
+/*
+* This class contains all the logic for the first window seen
+* contains the drag and drop logic/save & load game logic/This calls the Run Simulation class
+* which closes this window and opens a new window*/
+
+
+
 import SANDBOX.DataPoints;
 import SANDBOX.TrafficLight;
 
@@ -5,15 +12,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Random;
+
 
 class gui implements ActionListener {
     ImageSetup IS = new ImageSetup();
     DataPoints DP = new DataPoints();
     private JLabel statusbar;
     Handlerclass handler = new Handlerclass();
-    //Handlerclass2 handler2 = new Handlerclass2();
+
 
     ImageIcon micon1 = IS.getIcon5();
     ImageIcon micon2 = IS.getIcon6();
@@ -161,15 +167,16 @@ class gui implements ActionListener {
         public void mouseClicked(MouseEvent event) {
 
 
-            // whenever the mouse is states the position where it clicked with x and y in the statusbar
-            // statusbar.setText(String.format("Clicked at %d, %d", event.getXOnScreen(), event.getYOnScreen()));
+            //If the save button is pressed
             if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>70 && DP.getPressY()<270){
+                // function logic found at line 440
                 SaveGame();
             }
-
+            //if load button is pressed
             if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>271 && DP.getPressY()<370) {
 
                 try {
+                    // function logic found at line 470
                     LoadGame();
 
                 } catch (FileNotFoundException e) {
@@ -177,11 +184,15 @@ class gui implements ActionListener {
                 }
             }
 
+            //if the run simulation button is pressed close window and open RunSim window (class)
+
             if (DP.getPressX()>8 && DP.getPressX()<75 && DP.getPressY()>371 && DP.getPressY()<470) {
                 SaveGame();
                f.dispose();
                 try {
+                    //close window
                     f.dispose();
+                    //open new window
                     new RunSim();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -206,17 +217,14 @@ class gui implements ActionListener {
         //when the mouse entered the area(our window) this happens
         public void mouseEntered(MouseEvent event) {
 
-
             statusbar.setText("u entered the area");
 
-            // mousepanel.setBackground(Color.RED);
 
         }
 
         // when mouse exists the window this happens
         public void mouseExited(MouseEvent event) {
-            //   statusbar.setText(String.format("Stored value in DataPoints is: %d, %d", DP.getX(), DP.getY()));
-            // mousepanel.setBackground(Color.WHITE);
+
 
         }
 
@@ -226,12 +234,11 @@ class gui implements ActionListener {
         }
 
         public void mouseMoved(MouseEvent event) {
-            //DP.setX(event.getXOnScreen());
-            // DP.setY(event.getYOnScreen());
-            //  statusbar.setText(String.format("X: %d & Y: %d",DP.getX(),DP.getY()));
+
         }
 
-
+        //This function places scaled images of the smalled dragged images onto their corresponding grid tile.
+        //This is done checking where the mouse clicked and where the mouse released and based on that values the appropriate image is dropped onto the grid.
         public void gridIcons() {
 
             //Grid Icon 1
@@ -433,7 +440,7 @@ class gui implements ActionListener {
             }
         }
     }
-
+    //Save game logic
     private void SaveGame() {
         CsvWriter saveGame;
 
@@ -459,10 +466,13 @@ class gui implements ActionListener {
         saveGame.Save();
     }
 
+
+    //Load game function
     private void LoadGame() throws FileNotFoundException {
         LoadGame LG = new LoadGame();
         int[] LoadedGame = LG.getGridArray();
 
+        //updates Datapoints with road types for outside referencing
         DP.InputCondition(LoadedGame[0],0);
         DP.InputCondition(LoadedGame[1],1);
         DP.InputCondition(LoadedGame[2],2);
@@ -473,6 +483,7 @@ class gui implements ActionListener {
         DP.InputCondition(LoadedGame[7],7);
         DP.InputCondition(LoadedGame[8],8);
 
+        //Updates image array with road types
         IS.InputImageIntoArray(0,LoadedGame[0]);
         IS.InputImageIntoArray(1,LoadedGame[1]);
         IS.InputImageIntoArray(2,LoadedGame[2]);
@@ -483,6 +494,7 @@ class gui implements ActionListener {
         IS.InputImageIntoArray(7,LoadedGame[7]);
         IS.InputImageIntoArray(8,LoadedGame[8]);
 
+        //Populates grid with icons based on array values
         grid1.setIcon(IS.getImageFromArray(0));
         grid2.setIcon(IS.getImageFromArray(1));
         grid3.setIcon(IS.getImageFromArray(2));

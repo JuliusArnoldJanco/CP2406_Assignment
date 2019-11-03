@@ -2,6 +2,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
+/*
+This creates a save game in the format of a csv file
+* This is performed by saving each road type in a position in an array
+* the position of the array corresponds to its position on the grid
+*  */
+
+
 class CsvWriter {
 
     int[] saveGridIconLocation = {0,0,0,0,0,0,0,0,0};

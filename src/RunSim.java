@@ -1,5 +1,11 @@
+/*
+* This class simulates the road conditions.
+* Depending on what road type is on what grid tile the appropriate traffic lights will populate and animate by changing colours.
+* car animation isn't complete or currently really functioning. its there but quite poor.
+* only logic for 1 car is programmed but the structure for more cars is there.
+* car will progress vertically based on traffic tight condition in front of it.
+* the user has no interaction other than to close the window*/
 
-// SecondFrame.java
 import SANDBOX.DataPoints;
 import SANDBOX.TrafficLight;
 
@@ -11,19 +17,38 @@ import java.io.FileNotFoundException;
 import java.util.Random;
 
 public class RunSim extends JPanel implements ActionListener {
-    private JFrame frame = new JFrame("Second");
+
+    //Creates the window
+    private JFrame frame = new JFrame("Running simulation");
+
+    //Timer for animations
     Timer t = new Timer(10,this);
 
+    //using a layered pane for displaying the moving animations
     private JLayeredPane lpane = new JLayeredPane();
     JLayeredPane content = new JLayeredPane();
 
+    //init a grid panel for the road types
     JPanel gridPanel = new JPanel();
 
+    //crating and instance of imagesetup and datapoints
+    //loads the correct road types & then loads the road icons onto the grid
     DataPoints DP = new DataPoints();
     ImageSetup IS = new ImageSetup();
 
-    int timeInSeconds = 1;
+    //Loading the created grid
     LoadGame LG = new LoadGame();
+
+    //This is used to store the position and road type each car is currently on
+    RoadPositions RP = new RoadPositions();
+
+
+    //limit of the counter (*1000)
+    int timeInSeconds = 1;
+
+
+
+    //Populating grid with images
     private JLabel grid1 = new JLabel(IS.getImageFromArray(0));
     private JLabel grid2 = new JLabel(IS.getImageFromArray(1));
     private JLabel grid3 = new JLabel(IS.getImageFromArray(2));
@@ -34,6 +59,8 @@ public class RunSim extends JPanel implements ActionListener {
     private JLabel grid8 = new JLabel(IS.getImageFromArray(7));
     private JLabel grid9 = new JLabel(IS.getImageFromArray(8));
 
+    //Crating all trafficlight instances
+    //creates maximum number of traffic lights
     private TrafficLight TL = new TrafficLight();
     private TrafficLight TL2 = new TrafficLight();
     private TrafficLight TL3 = new TrafficLight();
@@ -70,19 +97,27 @@ public class RunSim extends JPanel implements ActionListener {
     private TrafficLight TL34 = new TrafficLight();
     private TrafficLight TL35 = new TrafficLight();
     private TrafficLight TL36 = new TrafficLight();
+
+    //Populating vehicles
     private Vehicle TL50 = new Vehicle();
     private Vehicle TL51 = new Vehicle();
 
 
 
+    //vehicle moving variables
+    private  int MovementIncrement = 0;
+    private int carx = 700;
+    private int cary =0;
+    private boolean horizontal = true;
 
-    private  int rSeed = 0;
-    private int carx = 100;
-    private int cary =-20;
-
+    //counting variable
     private int counter =0;
 
+    // Used to randomize the traffic light conditions
     private Random randomGenerator = new Random();
+
+    //These are used to control half the traffic lights
+    //as the other half are dependent on the condition of these
     private int TLCondition;
     private int TL1Condition;
     private int TL2Condition;
@@ -102,12 +137,19 @@ public class RunSim extends JPanel implements ActionListener {
     private int TL17Condition;
     private int TL18Condition;
     private int TL19Condition;
+    //creating a car variable with grid referencing
+    int[] car1;
 
 
+    //Where the simulation begins
 
     public RunSim() throws FileNotFoundException {
 
+        //Loads all the JPanels with a layered pane.
+
         lpane.setBounds(0, 0, 600, 600);
+
+        //Logic for function found at line 182
         LoadGridConditions();
 
         gridPanel.setLayout(new GridLayout(3, 3));
@@ -132,6 +174,7 @@ public class RunSim extends JPanel implements ActionListener {
         frame.pack();
         frame.setVisible(true);
 
+        //Start timer
         t.start();
         }
 
@@ -178,37 +221,444 @@ public class RunSim extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
-        rSeed += 1;
-        car1YDirection();
-        car1XDirection();
+        MovementIncrement += 1;
+
+        //if car is outside window return to origin
         if (cary>600){cary=0;}
 
-        MoveCar(TL50, cary, lpane);
-        System.out.println(GridType(cary,300)[0]+" "+GridType(cary,300)[1]);
-        if (rSeed == timeInSeconds*10) {
+
+
+        //Logic to move the car depending on its grid position/direction/trafficlight condition
+
+        //Logic to move the car if its going in a horizontal direction
+        //approach was check grid position/check road type and then
+        //check traffic light condition
+        //if traffic light isn't red proceed
+        //if the bottom right time is a corner change to horizontal movement.
+        //this was going to be further implemented to change direction (horizontal: true/false) based on traffic light conditions
+        if (RP.getCar1Grid()==0 && horizontal == false){
+            if (TL3.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = false;
+                }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = false;
+                }
+            }
+
+
+        else if (RP.getCar1Grid()==1 && horizontal == false){
+            if (TL7.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = false;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = false;
+            }
+
+        }
+        else if (RP.getCar1Grid()==2 && horizontal == false){
+            if (TL11.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = false;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = false;
+            }
+        }
+        else if (RP.getCar1Grid()==3 && horizontal == false){
+            if (TL15.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = false;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = false;
+            }
+        }
+        else if (RP.getCar1Grid()==4 && horizontal == false){
+            if (TL19.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = false;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = false;
+            }
+        }
+        else if (RP.getCar1Grid()==5 && horizontal == false){
+            if (TL23.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = false;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = false;
+            }
+        }
+        else if (RP.getCar1Grid()==6 && horizontal == false){
+            if (TL27.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = false;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = false;
+            }
+        }
+        else if (RP.getCar1Grid()==7 && horizontal == false){
+            if (TL31.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = false;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = false;
+            }
+        }
+        else if (RP.getCar1Grid()==8 && horizontal == false){
+            if (TL35.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = false;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = false;
+            }
+
+
+            if (RP.getCar1Road()==1){ car1YDirectionPos();
+                car1XDirectionNeg();
+                car1 = MoveCar(TL50, carx, Horizontal3(), lpane);
+                RP.setCar1(car1[1],car1[0],Horizontal3()[0],cary);
+                horizontal = true;
+            }
+        }
+        else{System.out.println("Spazzing out");}
+
+
+
+        //Logic to move the car if its going in a horizontal direction
+        //approach was check grid position/check road type and then
+        //check traffic light condition
+        //if traffic light isn't red proceed
+
+        if (RP.getCar1Grid()==0 && horizontal == true){
+            if (TL.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = true;
+            }
+        }
+
+
+        else if (RP.getCar1Grid()==1 && horizontal == true){
+            if (TL5.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = true;
+            }
+
+        }
+        else if (RP.getCar1Grid()==2 && horizontal == true){
+            if (TL9.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = true;
+            }
+        }
+        else if (RP.getCar1Grid()==3 && horizontal == true){
+            if (TL13.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = true;
+            }
+        }
+        else if (RP.getCar1Grid()==4 && horizontal == true){
+            if (TL17.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = true;
+            }
+        }
+        else if (RP.getCar1Grid()==5 && horizontal == true){
+            if (TL21.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = true;
+            }
+        }
+        else if (RP.getCar1Grid()==6 && horizontal == true){
+            if (TL25.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+                car1 = MoveCar(TL50, carx, Horizontal3(), lpane);
+                RP.setCar1(car1[1],car1[0],Horizontal3()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, carx, Vertical1(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical1()[0],cary);
+                horizontal = true;
+            }
+        }
+        else if (RP.getCar1Grid()==7 && horizontal == true){
+            if (TL29.getTrafficLightCondition() != 1) {
+                car1XDirectionNeg();
+                car1 = MoveCar(TL50, carx, Horizontal3(), lpane);
+                RP.setCar1(car1[1],car1[0],Horizontal3()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, carx, Vertical2(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical2()[0],cary);
+                horizontal = true;
+            }
+        }
+        else if (RP.getCar1Grid()==8 && horizontal == true){
+            if (TL33.getTrafficLightCondition() != 1) {
+                car1YDirectionPos();
+
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = true;
+            }
+            else{
+
+                car1 = MoveCar(TL50, cary, Vertical3(), lpane);
+                RP.setCar1(car1[1],car1[0],Vertical3()[0],cary);
+                horizontal = true;
+            }
+
+
+            if (RP.getCar1Road()==1){ car1YDirectionPos();
+                car1XDirectionNeg();
+                car1 = MoveCar(TL50, carx, Horizontal3(), lpane);
+                RP.setCar1(car1[1],car1[0],Horizontal3()[0],cary);
+                horizontal = false;
+            }
+        }
+        else{System.out.println("Spazzing out2");}
+
+
+
+
+
+
+        if (MovementIncrement == timeInSeconds*10) {
             RandomLightChanges();
 
             for (int i = 0; i < DP.getGridIcons().length; i++) {
                 ChangeTrafficLights(i);
             }
-        } else if (rSeed > timeInSeconds*20){rSeed =0; counter +=1;}
+        } else if (MovementIncrement > timeInSeconds*20){MovementIncrement =0; counter +=1;}
         else{}
         //System.out.println(counter);
     }
 
-    public static void MoveCar(Vehicle TL50, int cary, JLayeredPane lpane) {
-        TL50.setBounds(cary,300,60,30);
-        lpane.add(TL50, (3), 0);
+
+
+    //Logic to move the car.
+    //Updates the car animation based on its grid position and the road type its currently on
+    public int[] MoveCar(Vehicle Car, int movement, int[] direction, JLayeredPane drawingPanel) {
+        int[] gridConditions;
+
+        if (direction[1]==0) {
+            Car.setBounds(movement, direction[0], 60, 30);
+            lpane.add(Car, (3), 0);
+            System.out.println(GridType(movement,direction[0])[0]+" "+GridType(movement,direction[0])[1]);
+            gridConditions = GridType(movement,direction[0]);
+        }else{
+            Car.setBounds(direction[0], movement, 60, 30);
+            lpane.add(Car, (3), 0);
+            gridConditions = GridType(direction[0],movement);
+            System.out.println(GridType(direction[0],movement)[0]+" "+GridType(direction[0],movement)[1]);
+        }
+
+        if(gridConditions[1]==0){
+            if(gridConditions[0]==1){System.out.println("Grid 1 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 1 is a t section");}
+            else if(gridConditions[0]==3){
+
+                System.out.println("Grid 1 is a cross Section");}
+            else{System.out.println("Grid 1 is a straight");}
+        }
+        else if(gridConditions[1]==1){
+            if(gridConditions[0]==1){System.out.println("Grid 2 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 2 is a t section");}
+            else if(gridConditions[0]==3){
+
+                System.out.println("Grid 2 is a cross Section");}
+            else{System.out.println("Grid 2 is a straight");}
+        }
+        else if(gridConditions[1]==2){
+            if(gridConditions[0]==1){System.out.println("Grid 3 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 3 is a t section");}
+            else if(gridConditions[0]==3){System.out.println("Grid 3 is a cross Section");}
+            else{System.out.println("Grid 3 is a straight");}
+        }
+        else if(gridConditions[1]==3){
+            if(gridConditions[0]==1){System.out.println("Grid 4 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 4 is a t section");}
+            else if(gridConditions[0]==3){System.out.println("Grid 4 is a cross Section");}
+            else{System.out.println("Grid 4 is a straight");}
+        }
+        else if(gridConditions[1]==4){
+            if(gridConditions[0]==1){System.out.println("Grid 5 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 5 is a t section");}
+            else if(gridConditions[0]==3){System.out.println("Grid 5 is a cross Section");}
+            else{System.out.println("Grid 5 is a straight");}
+        }
+        else if(gridConditions[1]==5){
+            if(gridConditions[0]==1){System.out.println("Grid 6 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 6 is a t section");}
+            else if(gridConditions[0]==3){System.out.println("Grid 6 is a cross Section");}
+            else{System.out.println("Grid 6 is a straight");}
+        }
+        else if(gridConditions[1]==6){
+            if(gridConditions[0]==1){System.out.println("Grid 7 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 7 is a t section");}
+            else if(gridConditions[0]==3){System.out.println("Grid 7 is a cross Section");}
+            else{System.out.println("Grid 7 is a straight");}
+        }
+        else if(gridConditions[1]==7){
+            if(gridConditions[0]==1){System.out.println("Grid 8 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 8 is a t section");}
+            else if(gridConditions[0]==3){System.out.println("Grid 8 is a cross Section");}
+            else{System.out.println("Grid 8 is a straight");}
+        }
+        else{
+            if(gridConditions[0]==1){System.out.println("Grid 9 is a corner");}
+            else if(gridConditions[0]==2){System.out.println("Grid 9 is a t section");}
+            else if(gridConditions[0]==3){System.out.println("Grid 9 is a cross Section");}
+            else{System.out.println("Grid 9 is a straight");}
+        }
+
+        return gridConditions;
     }
 
-    public void car1YDirection() {
+
+
+
+    //Move car & govern direction
+
+    public void car1YDirectionPos() {
         cary+=5;
+
+
     }
-    public void car1XDirection() {
+    public void car1XDirectionPos() {
         carx+=5;
+        if (carx>600){carx=0;}
+        if (carx<-600){carx=599;}
+    }
+    public void car1YDirectionNeg() {
+        cary-=5;
+        if (cary>600){cary=0;}
+    }
+    public void car1XDirectionNeg() {
+        carx-=5;
+        if (cary>600){cary=0;}
     }
 
+    //The grid has 3 columns & 3 rows
+    //3 left lans in horizontal direction & 3 left lanes in vertical directions
+    //Horizontal1 is 1st row, Vertical1 is 1st column
 
+    public int[] Horizontal1(){int[] positionY ={0,0}; positionY[0] = 50; positionY[1] = 0; return positionY;}
+    public int[] Horizontal2(){int[] positionY ={0,0}; positionY[0] = 250; positionY[1] = 0;return positionY;}
+    public int[] Horizontal3(){int[] positionY ={0,0}; positionY[0] = 450; positionY[1] = 0;return positionY;}
+
+    public int[] Vertical1(){int[] positionX ={0,0}; positionX[0] = 50; positionX[1] = 1; return positionX;}
+    public int[] Vertical2(){int[] positionX ={0,0}; positionX[0] = 250; positionX[1] = 1; return positionX;}
+    public int[] Vertical3(){int[] positionX ={0,0}; positionX[0] = 450; positionX[1] = 1; return positionX;}
+
+
+
+    //Get road type and location specific to the car location at a specific time.
     public int[] GridType(int x, int y){
         int[] type = {0,0} ;
         if( x > 1 && x < 201 && y>0 && y<201){
@@ -247,6 +697,7 @@ public class RunSim extends JPanel implements ActionListener {
         return type;
     }
 
+    //changes the state of each traffic light by applying a random 1-3 value to each traffic light
     public void RandomLightChanges() {
         TLCondition = randomGenerator.nextInt(3) + 1;
         TL1Condition = randomGenerator.nextInt(3) + 1;
@@ -287,6 +738,12 @@ public class RunSim extends JPanel implements ActionListener {
         TL34.setTrafficLightCondition(TL9Condition);
     }
 
+    //Logic to change the traffic lights
+    //All traffic lights are broken down into 9 sub groups of 4 (Cross section in each grid position)
+    //if horizontal lights are green or yellow vertical lights are red
+    //Paints the traffic light & sets its condition
+    //if the road type is a cross section or a t section paint traffic lights appropriately.
+    //else dont paint any
     public void ChangeTrafficLights(int i) {
         if (DP.getCond(i) == 3) {
 
